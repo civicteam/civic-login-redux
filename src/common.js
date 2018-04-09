@@ -1,3 +1,4 @@
+/* eslint no-shadow: */
 import store from './store';
 
 export function handleErrors(response) {

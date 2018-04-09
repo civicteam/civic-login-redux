@@ -121,7 +121,14 @@ const civicSipSuccess = dispatch => (authToken) => {
   });
   dispatch(sessionLogin(authToken));
 };
+
+const CIVIC_SIP_ERROR = 'CIVIC_SIP_ERROR';
+
 // Action creators
+const civicSipError = dispatch => error => dispatch({
+  type: CIVIC_SIP_ERROR,
+  error,
+});
 
 export const login = () => (dispatch) => {
   dispatch({
@@ -140,8 +147,3 @@ export const logout = () => (dispatch) => {
   });
 };
 
-const CIVIC_SIP_ERROR = 'CIVIC_SIP_ERROR';
-const civicSipError = dispatch => error => dispatch({
-  type: CIVIC_SIP_ERROR,
-  error,
-});
