@@ -1,6 +1,5 @@
 import config from './config';
 import { handleErrors } from './common';
-import { loadPayments } from './payments';
 
 const options = {
   stage: config.stage,
@@ -18,14 +17,13 @@ const sessionService = {
 };
 
 // Actions
-const MAIN_REFRESH = 'marketplace-monitor/login/MAIN_REFRESH';
-// const MAIN_REFRESH_SUCCESS = 'marketplace-monitor/login/MAIN_REFRESH_SUCCESS';
-const CIVIC_SIP_LOGIN = 'marketplace-monitor/login/CIVIC_SIP_LOGIN';
-const SESSION_SUCCESS = 'marketplace-monitor/login/SESSION_SUCCESS';
-const LOGIN_SUCCESS = 'marketplace-monitor/login/LOGIN_SUCCESS';
-const LOG_OUT = 'marketplace-monitor/login/LOG_OUT';
-const CIVIC_SIP_CANCELLED = 'marketplace-monitor/login/CIVIC_SIP_CANCELLED';
-const CIVIC_SIP_ADD_EVENT_LISTENERS = 'marketplace-monitor/login/CIVIC_SIP_ADD_EVENT_LISTENERS';
+const MAIN_REFRESH = 'civic-login/login/MAIN_REFRESH';
+const CIVIC_SIP_LOGIN = 'civic-login/login/CIVIC_SIP_LOGIN';
+const SESSION_SUCCESS = 'civic-login/login/SESSION_SUCCESS';
+const LOGIN_SUCCESS = 'civic-login/login/LOGIN_SUCCESS';
+const LOG_OUT = 'civic-login/login/LOG_OUT';
+const CIVIC_SIP_CANCELLED = 'civic-login/login/CIVIC_SIP_CANCELLED';
+const CIVIC_SIP_ADD_EVENT_LISTENERS = 'civic-login/login/CIVIC_SIP_ADD_EVENT_LISTENERS';
 
 const INITIAL_STATE = {
   session: {},
@@ -97,8 +95,6 @@ const apiLoginSuccess = (sessionToken, expires) => (dispatch) => {
     sessionToken,
     expires,
   });
-  // TODO dispatch this from payments once receiving the LOGIN_SUCCESS event
-  return dispatch(loadPayments());
 };
 
 export function sessionLogin(authToken) {
