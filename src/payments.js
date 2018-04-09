@@ -1,7 +1,7 @@
 /**
  * 'Ducks' module for Temp
  */
-
+/* eslint no-console: */
 import config from './config';
 import { handleErrors, headers } from './common';
 
