@@ -7,7 +7,7 @@ const config = {
   },
 };
 
-const defaultStage = 'local';
-const exportedConfig = config[process.env.REACT_APP_STAGE];
+const defaultStage = 'prod';
+const exportedConfig = config[process.env.LOGIN_CONFIG];
 
 export default exportedConfig || config[defaultStage];
