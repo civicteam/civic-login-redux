@@ -2,7 +2,8 @@
   "extends": "airbnb-base",
   "env": {
       "mocha": true,
-      "node": true
+      "node": true,
+      "browser": true
   },
   "rules": {
       "max-len": ["warn", 200],
