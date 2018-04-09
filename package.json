@@ -1,0 +1,41 @@
+{
+  "name": "civic-login-redux",
+  "version": "1.0.0",
+  "description": "Integration of Civic Login to react front-end",
+  "main": "index.js",
+  "scripts": {
+    "test": "cross-env nyc --reporter=none mocha",
+    "coverage": "cross-env FORCE_COLOR=1 nyc report && nyc check-coverage",
+    "lint": "eslint --max-warnings=0 .",
+    "lint-autofix": "eslint --fix .",
+    "ci": "npm run test && npm run coverage && npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/civicteam/civic-login-redux.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/civicteam/civic-login-redux/issues"
+  },
+  "homepage": "https://github.com/civicteam/civic-login-redux#readme",
+  "dependencies": {
+    "prop-types": "^15.6.1",
+    "react": "^16.3.1",
+    "react-bootstrap": "^0.32.1",
+    "react-redux": "^5.0.7",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-router-redux": "^4.0.8",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-babel": "^5.0.0",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3"
+  }
+}
