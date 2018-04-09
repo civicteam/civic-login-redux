@@ -20,12 +20,7 @@
     "url": "https://github.com/civicteam/civic-login-redux/issues"
   },
   "homepage": "https://github.com/civicteam/civic-login-redux#readme",
-  "dependencies": {
-    "history": "^4.7.2",
-    "react-router-redux": "^4.0.8",
-    "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "cross-env": "^5.1.4",
     "eslint": "^4.19.1",
