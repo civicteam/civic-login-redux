@@ -22,12 +22,6 @@
   "homepage": "https://github.com/civicteam/civic-login-redux#readme",
   "dependencies": {
     "history": "^4.7.2",
-    "prop-types": "^15.6.1",
-    "react": "^16.3.1",
-    "react-bootstrap": "^0.32.1",
-    "react-redux": "^5.0.7",
-    "react-router": "^4.2.0",
-    "react-router-dom": "^4.2.2",
     "react-router-redux": "^4.0.8",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0"
@@ -40,5 +34,31 @@
     "eslint-plugin-import": "^2.10.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "nyc": "^11.6.0"
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "env": {
+      "mocha": true,
+      "node": true,
+      "browser": true
+    },
+    "rules": {
+      "max-len": [
+        "warn",
+        200
+      ],
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          "devDependencies": [
+            "**/test/*.js"
+          ]
+        }
+      ],
+      "no-plusplus": "warn",
+      "consistent-return": 1,
+      "no-param-reassign": 0,
+      "one-var": 0
+    }
   }
 }
