@@ -1,5 +1,5 @@
-import config from './config';
-import { handleErrors } from './common';
+const config = require('./config');
+const { handleErrors } = require('./common');
 
 const options = {
   stage: config.stage,
@@ -17,22 +17,22 @@ const sessionService = {
 };
 
 // Actions
-const MAIN_REFRESH = 'civic-login/login/MAIN_REFRESH';
-const CIVIC_SIP_LOGIN = 'civic-login/login/CIVIC_SIP_LOGIN';
-const SESSION_SUCCESS = 'civic-login/login/SESSION_SUCCESS';
-const LOGIN_SUCCESS = 'civic-login/login/LOGIN_SUCCESS';
-const LOG_OUT = 'civic-login/login/LOG_OUT';
-const CIVIC_SIP_CANCELLED = 'civic-login/login/CIVIC_SIP_CANCELLED';
-const CIVIC_SIP_ADD_EVENT_LISTENERS = 'civic-login/login/CIVIC_SIP_ADD_EVENT_LISTENERS';
+const MAIN_REFRESH = 'civic-login/MAIN_REFRESH';
+const CIVIC_SIP_LOGIN = 'civic-login/CIVIC_SIP_LOGIN';
+const SESSION_SUCCESS = 'civic-login/SESSION_SUCCESS';
+const LOGIN_SUCCESS = 'civic-login/LOGIN_SUCCESS';
+const LOG_OUT = 'civic-login/LOG_OUT';
+const CIVIC_SIP_CANCELLED = 'civic-login/CIVIC_SIP_CANCELLED';
+const CIVIC_SIP_ADD_EVENT_LISTENERS = 'civic-login/CIVIC_SIP_ADD_EVENT_LISTENERS';
+const CIVIC_SIP_SUCCESS = 'civic-login/CIVIC_SIP_SUCCESS';
+const CIVIC_SIP_ERROR = 'civic-login/CIVIC_SIP_ERROR';
 
 const INITIAL_STATE = {
   session: {},
+  isLoggedIn: false,
 };
 
-// exportable events
-export { LOGIN_SUCCESS };
-
-export default function reducer(state = INITIAL_STATE, action) {
+function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case MAIN_REFRESH:
     case CIVIC_SIP_LOGIN:
@@ -41,8 +41,17 @@ export default function reducer(state = INITIAL_STATE, action) {
         apiBusy: true,
         apiError: '',
       };
-    case CIVIC_SIP_CANCELLED:
     case LOGIN_SUCCESS:
+      return {
+        ...state,
+        apiBusy: false,
+        session: {
+          token: action.sessionToken,
+          expires: action.expires,
+        },
+        isLoggedIn: true,
+      };
+    case CIVIC_SIP_CANCELLED:
     case SESSION_SUCCESS:
       return {
         ...state,
@@ -58,6 +67,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         session: undefined,
         apiError: '',
         apiBusy: false,
+        isLoggedIn: false,
       };
     default:
       return state;
@@ -87,7 +97,6 @@ const civicSipCancelled = dispatch => response => dispatch({
 
 const civicSipLogin = () => Promise.resolve(civicSip.signup({ scopeRequest: civicSip.ScopeRequests.BASIC_SIGNUP }));
 
-const CIVIC_SIP_SUCCESS = 'CIVIC_SIP_SUCCESS';
 
 const apiLoginSuccess = (sessionToken, expires) => (dispatch) => {
   dispatch({
@@ -97,7 +106,7 @@ const apiLoginSuccess = (sessionToken, expires) => (dispatch) => {
   });
 };
 
-export function sessionLogin(authToken) {
+function sessionLogin(authToken) {
   return dispatch => fetch(LOGIN_URL, {
     body: JSON.stringify({ authToken }),
     headers: {
@@ -118,15 +127,13 @@ const civicSipSuccess = dispatch => (authToken) => {
   dispatch(sessionLogin(authToken));
 };
 
-const CIVIC_SIP_ERROR = 'CIVIC_SIP_ERROR';
-
 // Action creators
 const civicSipError = dispatch => error => dispatch({
   type: CIVIC_SIP_ERROR,
   error,
 });
 
-export const login = () => (dispatch) => {
+const login = () => (dispatch) => {
   dispatch({
     type: CIVIC_SIP_ADD_EVENT_LISTENERS,
   });
@@ -137,9 +144,17 @@ export const login = () => (dispatch) => {
   return civicSipLogin();
 };
 
-export const logout = () => (dispatch) => {
+const logout = () => (dispatch) => {
   dispatch({
     type: LOG_OUT,
   });
 };
 
+module.exports = {
+  login,
+  reducer,
+  LOGIN_SUCCESS,
+  logout,
+  sessionLogin,
+  addEventListeners,
+};

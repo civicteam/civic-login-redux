@@ -8,6 +8,9 @@ const config = {
 };
 
 const defaultStage = 'prod';
-const exportedConfig = config[process.env.LOGIN_CONFIG];
+const exportedConfig = process.env.STAGE;
 
-export default exportedConfig || config[defaultStage];
+// export default exportedConfig || config[defaultStage];
+module.exports = {
+  exportedConfig: exportedConfig || config[defaultStage],
+};
