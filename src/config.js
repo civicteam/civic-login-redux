@@ -12,5 +12,5 @@ const exportedConfig = process.env.STAGE;
 
 // export default exportedConfig || config[defaultStage];
 module.exports = {
-  exportedConfig: exportedConfig || config[defaultStage],
+  config: config[defaultStage] || exportedConfig,
 };

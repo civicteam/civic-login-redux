@@ -98,15 +98,19 @@ const civicSipCancelled = dispatch => response => dispatch({
 const civicSipLogin = () => Promise.resolve(civicSip.signup({ scopeRequest: civicSip.ScopeRequests.BASIC_SIGNUP }));
 
 
-const apiLoginSuccess = (sessionToken, expires) => (dispatch) => {
+const apiLoginSuccess = (sessionToken, expires, loadPayments = null) => (dispatch) => {
   dispatch({
     type: LOGIN_SUCCESS,
     sessionToken,
     expires,
   });
+
+  if (loadPayments) {
+    return dispatch(loadPayments);
+  }
 };
 
-function sessionLogin(authToken) {
+function sessionLogin(authToken, loadPayments) {
   return dispatch => fetch(LOGIN_URL, {
     body: JSON.stringify({ authToken }),
     headers: {
@@ -116,15 +120,15 @@ function sessionLogin(authToken) {
     mode: 'cors',
   }).then(handleErrors)
     .then(response => response.json())
-    .then(body => dispatch(apiLoginSuccess(body.sessionToken, sessionService.getExpiry())));
+    .then(body => dispatch(apiLoginSuccess(body.sessionToken, sessionService.getExpiry(), loadPayments)));
 }
 
-const civicSipSuccess = dispatch => (authToken) => {
+const civicSipSuccess = (dispatch, loadPayments) => (authToken) => {
   dispatch({
     type: CIVIC_SIP_SUCCESS,
     authToken,
   });
-  dispatch(sessionLogin(authToken));
+  dispatch(sessionLogin(authToken, loadPayments));
 };
 
 // Action creators
@@ -133,11 +137,11 @@ const civicSipError = dispatch => error => dispatch({
   error,
 });
 
-const login = () => (dispatch) => {
+const login = loadPayments => (dispatch) => {
   dispatch({
     type: CIVIC_SIP_ADD_EVENT_LISTENERS,
   });
-  addEventListeners(civicSipSuccess(dispatch), civicSipCancelled(dispatch), civicSipError(dispatch));
+  addEventListeners(civicSipSuccess(dispatch, loadPayments), civicSipCancelled(dispatch), civicSipError(dispatch));
   dispatch({
     type: CIVIC_SIP_LOGIN,
   });
