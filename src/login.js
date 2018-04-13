@@ -1,15 +1,13 @@
-const config = require('./config');
+
 const { handleErrors } = require('./common');
 
-const options = {
-  stage: config.stage,
-  ...config.civicSip,
+const loginConfig = {
+  civicSip: {},
+  endpoint: '',
 };
 
-const LOGIN_URL = `${config.endpoint}/login`;
-
-// civic is imported in index.html
-const civicSip = new civic.sip(options); // eslint-disable-line no-undef, new-cap
+const civicSip = new civic.sip(loginConfig.civicSip); // eslint-disable-line no-undef, new-cap
+const LOGIN_URL = `${loginConfig.endpoint}/login`;
 
 // TODO
 const sessionService = {
@@ -29,8 +27,8 @@ const CIVIC_SIP_ERROR = 'civic-login/CIVIC_SIP_ERROR';
 
 const INITIAL_STATE = {
   session: {},
-  isLoggedIn: false,
 };
+
 
 function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
@@ -49,7 +47,6 @@ function reducer(state = INITIAL_STATE, action) {
           token: action.sessionToken,
           expires: action.expires,
         },
-        isLoggedIn: true,
       };
     case CIVIC_SIP_CANCELLED:
     case SESSION_SUCCESS:
@@ -67,7 +64,6 @@ function reducer(state = INITIAL_STATE, action) {
         session: undefined,
         apiError: '',
         apiBusy: false,
-        isLoggedIn: false,
       };
     default:
       return state;
@@ -98,19 +94,15 @@ const civicSipCancelled = dispatch => response => dispatch({
 const civicSipLogin = () => Promise.resolve(civicSip.signup({ scopeRequest: civicSip.ScopeRequests.BASIC_SIGNUP }));
 
 
-const apiLoginSuccess = (sessionToken, expires, loadPayments = null) => (dispatch) => {
+const apiLoginSuccess = (sessionToken, expires) => (dispatch) => {
   dispatch({
     type: LOGIN_SUCCESS,
     sessionToken,
     expires,
   });
-
-  if (loadPayments) {
-    return dispatch(loadPayments);
-  }
 };
 
-function sessionLogin(authToken, loadPayments) {
+function sessionLogin(authToken) {
   return dispatch => fetch(LOGIN_URL, {
     body: JSON.stringify({ authToken }),
     headers: {
@@ -120,15 +112,15 @@ function sessionLogin(authToken, loadPayments) {
     mode: 'cors',
   }).then(handleErrors)
     .then(response => response.json())
-    .then(body => dispatch(apiLoginSuccess(body.sessionToken, sessionService.getExpiry(), loadPayments)));
+    .then(body => dispatch(apiLoginSuccess(body.sessionToken, sessionService.getExpiry())));
 }
 
-const civicSipSuccess = (dispatch, loadPayments) => (authToken) => {
+const civicSipSuccess = dispatch => (authToken) => {
   dispatch({
     type: CIVIC_SIP_SUCCESS,
     authToken,
   });
-  dispatch(sessionLogin(authToken, loadPayments));
+  dispatch(sessionLogin(authToken));
 };
 
 // Action creators
@@ -137,11 +129,11 @@ const civicSipError = dispatch => error => dispatch({
   error,
 });
 
-const login = loadPayments => (dispatch) => {
+const login = () => (dispatch) => {
   dispatch({
     type: CIVIC_SIP_ADD_EVENT_LISTENERS,
   });
-  addEventListeners(civicSipSuccess(dispatch, loadPayments), civicSipCancelled(dispatch), civicSipError(dispatch));
+  addEventListeners(civicSipSuccess(dispatch), civicSipCancelled(dispatch), civicSipError(dispatch));
   dispatch({
     type: CIVIC_SIP_LOGIN,
   });
@@ -157,8 +149,6 @@ const logout = () => (dispatch) => {
 module.exports = {
   login,
   reducer,
-  LOGIN_SUCCESS,
   logout,
-  sessionLogin,
-  addEventListeners,
+  loginConfig,
 };
