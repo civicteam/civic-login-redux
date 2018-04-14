@@ -4,8 +4,8 @@
   "description": "Integration of Civic Login to react front-end",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env nyc --reporter=none mocha",
-    "coverage": "cross-env FORCE_COLOR=1 nyc report && nyc check-coverage",
+    "test": "cross-env nyc --reporter=none mocha -r ./test/init.test ",
+    "coverage": "cross-env FORCE_COLOR=1 nyc report && nyc check-coverage --lines 80",
     "lint": "eslint --max-warnings=0 .",
     "lint-autofix": "eslint --fix .",
     "ci": "npm run test && npm run coverage && npm run lint"
@@ -20,15 +20,20 @@
     "url": "https://github.com/civicteam/civic-login-redux/issues"
   },
   "homepage": "https://github.com/civicteam/civic-login-redux#readme",
-  "dependencies": {},
+  "dependencies": {
+    "redux-thunk": "^2.2.0"
+  },
   "devDependencies": {
+    "chai": "^4.1.2",
     "cross-env": "^5.1.4",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-babel": "^5.0.0",
     "eslint-plugin-import": "^2.10.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
-    "nyc": "^11.6.0"
+    "nyc": "^11.6.0",
+    "redux-actions-assertions": "^1.3.0",
+    "sinon": "^4.5.0"
   },
   "eslintConfig": {
     "extends": "airbnb-base",
