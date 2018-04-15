@@ -24,8 +24,6 @@ registerInitialStoreState({ login: loginService.reducer });
 registerMiddlewares([thunk]);
 registerAssertions();
 
-// loginService.civicSipSuccess = sinon.stub(a => a);
-
 describe('Login Service actions', () => {
   it('should dispatch login action', (done) => {
     expect(loginService.login()).to.dispatch.actions([{ type: CIVIC_SIP_ADD_EVENT_LISTENERS }], done);

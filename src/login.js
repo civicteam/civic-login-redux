@@ -1,10 +1,10 @@
 class LoginService {
-  // Library Constructor
+  // Library Constructor initialized with civicSip configuration options
   constructor(config) {
     this.config = config;
     const civicSip = new civic.sip(this.config.civicSip); // eslint-disable-line no-undef, new-cap
 
-    this.appService = {
+    this.appExpiry = {
       getExpiry: () => { },
     };
 
@@ -73,6 +73,7 @@ class LoginService {
     const civicSipLogin = () => Promise.resolve(civicSip.signup({ scopeRequest: civicSip.ScopeRequests.BASIC_SIGNUP }));
 
     // Action Creators
+
     const civicSipCancelled = dispatch => response => dispatch({
       type: CIVIC_SIP_CANCELLED,
       response,
@@ -86,7 +87,7 @@ class LoginService {
       });
     };
 
-    this.processLogin = function processLogin() {
+    this.apiProcessLogin = function apiProcessLogin() {
     };
 
     const civicSipSuccess = dispatch => (authToken) => {
@@ -94,10 +95,9 @@ class LoginService {
         type: CIVIC_SIP_SUCCESS,
         authToken,
       });
-      dispatch(this.processLogin(authToken));
+      dispatch(this.apiProcessLogin(authToken));
     };
 
-    // Action creators
     const civicSipError = dispatch => error => dispatch({
       type: CIVIC_SIP_ERROR,
       error,
