@@ -38,14 +38,6 @@ jobs:
 # use machine rather than docker as the tests use docker-compose (https://circleci.com/docs/2.0/docker-compose/)
     machine: true
 
-    # # working directory for all tasks is the backend folder
-    # working_directory: ~/repo
-
-    # steps:
-    #   # checkout the repo into the root folder (required because working_directory is ~/repo/backend)
-    #   - checkout:
-    #       path: ~/repo
-
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -75,5 +67,3 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-
-      # - run: npm run integration-test
