@@ -4,9 +4,9 @@ A simple Redux Library that enables integration of Civic Login into a react fron
 
 ## Installation
 
-npm i civic-login-redux --save-dev
+run `npm i civic-login-redux --save-dev`
 ## Usage
-
+```bash
 const LoginService = require('civic-login-redux');
 const config = {
   civicSip: {
@@ -14,11 +14,26 @@ const config = {
   },
 };
 const loginService = new LoginService(config);
+```
 
-##Available Constructors
+## Available Methods
+``` bash
+// Login action to be dispatched from the main application
+loginService.login()
 
-loginService.login() // Login action to be dispatched from the main application
-loginService.logout() // logout action to be dispached from the main application
-loginService.reducer  // login reducer function
-loginService.processLogin() // Action to be defined in main application to process login request
-loginService.apiLoginSuccess(token, expires) //Action to be dispatched upon successful processLogin
+// logout action to be dispached from the main application
+loginService.logout()
+
+// login reducer function
+loginService.reducer
+
+// Action to be defined in main application to process login request
+loginService.apiProcessLogin(authToken)
+
+// Method to set token expirty date (to be defined in the application)
+loginService.appExpiry.getExpiry()
+
+// Action to be dispatched after apiProcessLogin is successful 
+// expires is the value returned from loginService.appExpiry.getExpiry()
+loginService.apiLoginSuccess(token, expires) 
+```
