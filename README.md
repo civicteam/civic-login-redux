@@ -15,7 +15,7 @@ const config = {
 };
 const loginService = new LoginService(config);
 ```
-See [Civic Docs](https://docs.civic.com/#GettingStarted) for details on civicSip options.
+See [Civic Docs](https://docs.civic.com/#GettingStarted) for details on setting civicSip options.
 
 Remember to include the civic.sip.js script on your page. This exposes a single global object, civic
 
