@@ -74,7 +74,7 @@ class LoginService {
       response,
     });
 
-    this.apiLoginSuccess = (sessionToken) => (dispatch) => {
+    this.apiLoginSuccess = sessionToken => (dispatch) => {
       dispatch({
         type: LOGIN_SUCCESS,
         sessionToken,
