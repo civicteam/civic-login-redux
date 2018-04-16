@@ -44,7 +44,7 @@ loginService.apiProcessLogin = function(authToken) {
   return dispatch => fetch('LOGIN_URL', {headers}) // body should include the authtoken
     .then(handleErrors) // write how you want errors to be handled
     .then(response => response.json())
-    .then(body => dispatch(apiLoginSuccess(body.sessionToken, loginService.appService.getExpiry())));
+    .then(body => dispatch(loginService.apiLoginSuccess(body.sessionToken, loginService.appService.getExpiry())));
 }
 
 
