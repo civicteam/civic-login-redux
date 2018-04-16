@@ -76,8 +76,8 @@ describe('Login Service Reducer', () => {
     expect(stateAfterLogout.session).to.be.undefined;
     expect(stateAfterLogout).to.deep.equal({ session: undefined, apiError: '', apiBusy: false });
     expect(stateAfterCivicSipLogin).to.deep.equal({ apiBusy: true, apiError: '', session: {} });
-    expect(stateAfterLoginSuccess).to.deep.equal({ apiBusy: false, session: { token: 'myNewToken', expires: undefined } });
-    expect(stateAfterCivicSipCancelled).to.deep.equal({ apiBusy: false, session: { token: 'mySuccessNewToken', expires: undefined } });
+    expect(stateAfterLoginSuccess).to.deep.equal({ apiBusy: false, session: { token: 'myNewToken' } });
+    expect(stateAfterCivicSipCancelled).to.deep.equal({ apiBusy: false, session: { token: 'mySuccessNewToken' } });
     expect(stateAfterRandomAction).to.deep.equal({ session: {} });
   });
 });
