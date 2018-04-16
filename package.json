@@ -4,6 +4,7 @@
   "description": "Integration of Civic Login to react front-end",
   "main": "index.js",
   "scripts": {
+    "js": "babel src/login.js --out-file public/login.js",
     "test": "cross-env nyc --reporter=none mocha -r ./test/init-test ",
     "coverage": "cross-env FORCE_COLOR=1 nyc report && nyc check-coverage",
     "lint": "eslint --max-warnings=0 .",
@@ -24,6 +25,9 @@
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
     "cross-env": "^5.1.4",
     "eslint": "^4.19.1",
