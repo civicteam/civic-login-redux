@@ -17,7 +17,7 @@ const loginService = new LoginService(config);
 ```
 See [Civic Docs](https://docs.civic.com/#GettingStarted) for details on civicSip options.
 
-Remenber to include the civic.sip.js script on your page. This exposes a single global object, civic
+Remember to include the civic.sip.js script on your page. This exposes a single global object, civic
 
 
 
@@ -52,7 +52,6 @@ loginService.apiProcessLogin = function(authToken) {
 loginService.appExpiry.getExpiry()
 
 // Action to be dispatched after apiProcessLogin is successful 
-// expires is the value returned from loginService.appExpiry.getExpiry()
-loginService.apiLoginSuccess(token, expires) 
+loginService.apiLoginSuccess(token, expires)  // expires is the value returned from loginService.appExpiry.getExpiry()
 ```
 
