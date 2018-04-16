@@ -1,5 +1,5 @@
 /* eslint no-unused-expressions:  */
-const LoginService = require('../');
+const LoginService = require('../src/login');
 const { expect } = require('chai');
 const thunk = require('redux-thunk').default;
 
