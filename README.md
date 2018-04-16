@@ -40,18 +40,15 @@ combineReducers({
 // Action to be defined in main application to process login request
 loginService.apiProcessLogin(authToken)
 
+ // Example function that calls a back-end service that handles the auth-token
 loginService.apiProcessLogin = function(authToken) {
   return dispatch => fetch('LOGIN_URL', {headers}) // body should include the authtoken
     .then(handleErrors) // write how you want errors to be handled
     .then(response => response.json())
-    .then(body => dispatch(loginService.apiLoginSuccess(body.sessionToken, loginService.appService.getExpiry())));
+    .then(body => dispatch(loginService.apiLoginSuccess(body.sessionToken)));
 }
 
-
-// Method to set token expirty date (to be defined in the application)
-loginService.appExpiry.getExpiry()
-
 // Action to be dispatched after apiProcessLogin is successful 
-loginService.apiLoginSuccess(token, expires)  // expires is the value returned from loginService.appExpiry.getExpiry()
+loginService.apiLoginSuccess(token) 
 ```
 

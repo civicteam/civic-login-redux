@@ -4,10 +4,6 @@ class LoginService {
     this.config = config;
     const civicSip = new civic.sip(this.config.civicSip); // eslint-disable-line no-undef, new-cap
 
-    this.appExpiry = {
-      getExpiry: () => { },
-    };
-
     // Actions
     const CIVIC_SIP_LOGIN = 'civic-login/CIVIC_SIP_LOGIN';
     const LOGIN_SUCCESS = 'civic-login/LOGIN_SUCCESS';
@@ -38,7 +34,6 @@ class LoginService {
             apiBusy: false,
             session: {
               token: action.sessionToken,
-              expires: action.expires,
             },
           };
         case LOG_OUT:
@@ -79,11 +74,10 @@ class LoginService {
       response,
     });
 
-    this.apiLoginSuccess = (sessionToken, expires) => (dispatch) => {
+    this.apiLoginSuccess = (sessionToken) => (dispatch) => {
       dispatch({
         type: LOGIN_SUCCESS,
         sessionToken,
-        expires,
       });
     };
 
