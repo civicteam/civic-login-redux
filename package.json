@@ -1,0 +1,78 @@
+{
+  "name": "civic-login-redux",
+  "version": "1.0.0",
+  "description": "Integration of Civic Login to react front-end",
+  "main": "index.js",
+  "scripts": {
+    "transpile": "babel src/login.js --out-file public/login.js",
+    "test": "cross-env nyc --reporter=none mocha -r ./test/init-test",
+    "coverage": "cross-env FORCE_COLOR=1 nyc report && nyc check-coverage",
+    "lint": "eslint --max-warnings=0 .",
+    "lint-autofix": "eslint --fix .",
+    "ci": "npm run test && npm run coverage && npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/civicteam/civic-login-redux.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/civicteam/civic-login-redux/issues"
+  },
+  "homepage": "https://github.com/civicteam/civic-login-redux#readme",
+  "dependencies": {
+    "redux-thunk": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "chai": "^4.1.2",
+    "cross-env": "^5.1.4",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-babel": "^5.0.0",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "mocha": "^5.1.0",
+    "nyc": "^11.6.0",
+    "redux-actions-assertions": "^1.3.0",
+    "sinon": "^4.5.0"
+  },
+  "nyc": {
+    "lines": 75,
+    "statements": 75,
+    "functions": 60,
+    "branches": 75,
+    "exclude": [
+      "test/*"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "env": {
+      "mocha": true,
+      "node": true,
+      "browser": true
+    },
+    "rules": {
+      "max-len": [
+        "warn",
+        200
+      ],
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          "devDependencies": [
+            "**/test/*.js"
+          ]
+        }
+      ],
+      "no-plusplus": "warn",
+      "consistent-return": 1,
+      "no-param-reassign": 0,
+      "one-var": 0
+    }
+  }
+}
