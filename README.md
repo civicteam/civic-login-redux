@@ -4,51 +4,71 @@ A simple Redux Library that enables integration of Civic Login into a react fron
 
 ## Installation
 
-run `npm install civic-login-redux --save`
+Run `npm install civic-login-redux --save`
+
 ## Usage
-```bash
+
+```javascript
 const LoginService = require('civic-login-redux');
 const config = {
   civicSip: {
-    // civicSip Options
+    // civicSip parameters
+    appId: '...',
   },
+  keepAliveInterval: 60000 // optional
 };
 const loginService = new LoginService(config);
 ```
-See [Civic Docs](https://docs.civic.com/#GettingStarted) for details on setting civicSip options.
 
-Remember to include the civic.sip.js script on your page. This exposes a single global object, civic
+See [Civic Docs](https://docs.civic.com/#GettingStarted) for details on setting `civicSip` options.
 
-
+Remember to include the `civic.sip.js` script on your page. This exposes a single global object `civic`.
 
 ## Available Methods
-``` bash
+
+```javascript
 // Login action to be dispatched from the main application
-loginService.login() - This action displays the QR code iframe that can be scanned using the mobile app
+// This action displays the QR code iframe that can be scanned using the mobile app
+loginService.login()
 
 // logout action to be dispached from the main application
-loginService.logout() - Action to log out of the application
+loginService.logout()
+
+// Action to be dispatched after apiProcessLogin is successful
+loginService.apiLoginSuccess(authToken)
 
 // login reducer function
-loginService.reducer - This should be included in the list of reducers of the main application
-Example code :
+// This should be included in the list of reducers of the main application
+loginService.reducer
+```
+
+## Sample code
+
+```javascript
 import { combineReducers } from 'redux';
+
 combineReducers({
   loginService : loginService.reducer,
 });
 
-// Action to be defined in main application to process login request
-loginService.apiProcessLogin(authToken)
+/**
+ * Methods implemented in the main application
+ */
 
- // Example function that calls a back-end service that handles the auth-token
+// Example function that calls a back-end service which handles the auth token and generates a session token
 loginService.apiProcessLogin = function(authToken) {
-  return dispatch => fetch('LOGIN_URL', {headers}) // body should include the authtoken
-    .then(handleErrors) // write how you want errors to be handled
+  return dispatch => fetch('LOGIN_URL', {headers, method: 'POST', body: JSON.stringify({authToken})})
     .then(response => response.json())
-    .then(body => dispatch(loginService.apiLoginSuccess(body.sessionToken)));
+    .then(({sessionToken}) => dispatch(loginService.apiLoginSuccess(sessionToken)));
 }
 
-// Action to be dispatched after apiProcessLogin is successful 
-loginService.apiLoginSuccess(token) 
+// Optional function to handle keep-alive sessions
+// This will run on every `keepAliveInterval` milliseconds after the login is successful
+// If the `keepAliveInterval` parameter is omitted from the `LoginService` config, this function will not be called 
+loginService.keepAlive = function() {
+  return dispatch => fetch('KEEP_ALIVE_URL', {headers})
+    .then(response => response.json())
+    .then(({sessionToken}) => dispatch(loginService.apiLoginSuccess(sessionToken)));
+}
 ```
 

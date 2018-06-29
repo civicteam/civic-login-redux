@@ -7,6 +7,7 @@ class LoginService {
     // Actions
     const CIVIC_SIP_LOGIN = 'civic-login/CIVIC_SIP_LOGIN';
     const LOGIN_SUCCESS = 'civic-login/LOGIN_SUCCESS';
+    const LOGIN_KEEP_ALIVE = 'civic-login/LOGIN_KEEP_ALIVE';
     const LOG_OUT = 'civic-login/LOG_OUT';
     const CIVIC_SIP_CANCELLED = 'civic-login/CIVIC_SIP_CANCELLED';
     const CIVIC_SIP_ADD_EVENT_LISTENERS = 'civic-login/CIVIC_SIP_ADD_EVENT_LISTENERS';
@@ -84,12 +85,21 @@ class LoginService {
     this.apiProcessLogin = function apiProcessLogin() {
     };
 
+    this.keepAlive = function keepAlive() {
+    };
+
     const civicSipSuccess = dispatch => (authToken) => {
       dispatch({
         type: CIVIC_SIP_SUCCESS,
         authToken,
       });
       dispatch(this.apiProcessLogin(authToken));
+
+      clearInterval(this.keepAliveIntervalID);
+      this.keepAliveIntervalID = setInterval(() => {
+        dispatch({ type: LOGIN_KEEP_ALIVE });
+        dispatch(this.keepAlive());
+      }, this.config.keepAliveInterval);
     };
 
     const civicSipError = dispatch => error => dispatch({
