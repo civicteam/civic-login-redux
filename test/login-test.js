@@ -40,6 +40,14 @@ describe('Login Service actions', () => {
   it('should dispatch logout action', (done) => {
     expect(loginService.logout()).to.dispatch.actions([{ type: LOG_OUT }], done);
   });
+
+  it('should support an apiProcessLogin function', () => {
+    expect(() => loginService.apiProcessLogin()).to.not.throw();
+  });
+
+  it('should support a keepAlive function', () => {
+    expect(() => loginService.keepAlive()).to.not.throw();
+  });
 });
 
 const { reducer } = loginService;
