@@ -17,6 +17,7 @@ function LoginService(config) {
   // Actions
   var CIVIC_SIP_LOGIN = 'civic-login/CIVIC_SIP_LOGIN';
   var LOGIN_SUCCESS = 'civic-login/LOGIN_SUCCESS';
+  var LOGIN_KEEP_ALIVE = 'civic-login/LOGIN_KEEP_ALIVE';
   var LOG_OUT = 'civic-login/LOG_OUT';
   var CIVIC_SIP_CANCELLED = 'civic-login/CIVIC_SIP_CANCELLED';
   var CIVIC_SIP_ADD_EVENT_LISTENERS = 'civic-login/CIVIC_SIP_ADD_EVENT_LISTENERS';
@@ -101,6 +102,8 @@ function LoginService(config) {
 
   this.apiProcessLogin = function apiProcessLogin() {};
 
+  this.keepAlive = function keepAlive() {};
+
   var civicSipSuccess = function civicSipSuccess(dispatch) {
     return function (authToken) {
       dispatch({
@@ -108,6 +111,12 @@ function LoginService(config) {
         authToken: authToken
       });
       dispatch(_this.apiProcessLogin(authToken));
+
+      clearInterval(_this.keepAliveIntervalID);
+      _this.keepAliveIntervalID = setInterval(function () {
+        dispatch({ type: LOGIN_KEEP_ALIVE });
+        dispatch(_this.keepAlive());
+      }, _this.config.keepAliveInterval);
     };
   };
 
