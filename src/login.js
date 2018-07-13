@@ -1,8 +1,16 @@
+/* global civic */
+
 class LoginService {
   // Library Constructor initialized with civicSip configuration options
   constructor(config) {
     this.config = config;
-    const civicSip = new civic.sip(this.config.civicSip); // eslint-disable-line no-undef, new-cap
+    const civicSip = new civic.sip(config.civicSip); // eslint-disable-line new-cap
+    const scopeRequest = config.scopeRequest || civicSip.ScopeRequests.BASIC_SIGNUP;
+
+    const unimplementedFunctionPlaceholder = () => {};
+
+    this.apiProcessLogin = config.apiProcessLogin || unimplementedFunctionPlaceholder;
+    this.keepAlive = config.keepAlive || unimplementedFunctionPlaceholder;
 
     // Actions
     const CIVIC_SIP_LOGIN = 'civic-login/CIVIC_SIP_LOGIN';
@@ -77,7 +85,7 @@ class LoginService {
     };
 
     // CivicSip Login Function
-    const civicSipLogin = () => Promise.resolve(civicSip.signup({ scopeRequest: civicSip.ScopeRequests.BASIC_SIGNUP }));
+    const civicSipLogin = () => Promise.resolve(civicSip.signup({ scopeRequest }));
 
     // Action Creators
 
@@ -141,5 +149,11 @@ class LoginService {
     };
   }
 }
+
+// mirror the scopeRequests map from civicSip so that
+// clients can choose the type of scope request they wish to use
+// eslint-disable-next-line new-cap
+LoginService.scopeRequests = (new civic.sip()).ScopeRequests;
+
 
 module.exports = LoginService;
