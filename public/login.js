@@ -24,6 +24,17 @@ function LoginService(config) {
   var CIVIC_SIP_SUCCESS = 'civic-login/CIVIC_SIP_SUCCESS';
   var CIVIC_SIP_ERROR = 'civic-login/CIVIC_SIP_ERROR';
 
+  this.actionType = {
+    CIVIC_SIP_LOGIN: CIVIC_SIP_LOGIN,
+    LOGIN_SUCCESS: LOGIN_SUCCESS,
+    LOGIN_KEEP_ALIVE: LOGIN_KEEP_ALIVE,
+    LOG_OUT: LOG_OUT,
+    CIVIC_SIP_CANCELLED: CIVIC_SIP_CANCELLED,
+    CIVIC_SIP_ADD_EVENT_LISTENERS: CIVIC_SIP_ADD_EVENT_LISTENERS,
+    CIVIC_SIP_SUCCESS: CIVIC_SIP_SUCCESS,
+    CIVIC_SIP_ERROR: CIVIC_SIP_ERROR
+  };
+
   // Initial Login State
   var INITIAL_STATE = {
     session: {}
@@ -106,17 +117,24 @@ function LoginService(config) {
 
   var civicSipSuccess = function civicSipSuccess(dispatch) {
     return function (authToken) {
+      var dispatchIfExists = function dispatchIfExists(action) {
+        return action && dispatch(action);
+      };
+
       dispatch({
         type: CIVIC_SIP_SUCCESS,
         authToken: authToken
       });
-      dispatch(_this.apiProcessLogin(authToken));
+      dispatchIfExists(_this.apiProcessLogin(authToken));
 
       clearInterval(_this.keepAliveIntervalID);
-      _this.keepAliveIntervalID = setInterval(function () {
-        dispatch({ type: LOGIN_KEEP_ALIVE });
-        dispatch(_this.keepAlive());
-      }, _this.config.keepAliveInterval);
+
+      if (_this.config.keepAliveInterval) {
+        _this.keepAliveIntervalID = setInterval(function () {
+          dispatch({ type: LOGIN_KEEP_ALIVE });
+          dispatchIfExists(_this.keepAlive());
+        }, _this.config.keepAliveInterval);
+      }
     };
   };
 
