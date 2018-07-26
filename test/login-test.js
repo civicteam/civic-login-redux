@@ -1,16 +1,12 @@
+/* global civic */
 /* eslint no-unused-expressions:  */
 const LoginService = require('../src/login');
 const { expect } = require('chai');
 const thunk = require('redux-thunk').default;
+const sinon = require('sinon');
 
 const { registerMiddlewares, registerInitialStoreState } = require('redux-actions-assertions');
 const { registerAssertions } = require('redux-actions-assertions/chai');
-
-const CIVIC_SIP_LOGIN = 'civic-login/CIVIC_SIP_LOGIN';
-const LOGIN_SUCCESS = 'civic-login/LOGIN_SUCCESS';
-const LOG_OUT = 'civic-login/LOG_OUT';
-const CIVIC_SIP_CANCELLED = 'civic-login/CIVIC_SIP_CANCELLED';
-const CIVIC_SIP_ADD_EVENT_LISTENERS = 'civic-login/CIVIC_SIP_ADD_EVENT_LISTENERS';
 
 const config = {
   civicSip: {
@@ -18,13 +14,43 @@ const config = {
     appId: '',
     api: '',
   },
+  keepAliveInterval: null,
 };
 const loginService = new LoginService(config);
 registerInitialStoreState({ login: loginService.reducer });
 registerMiddlewares([thunk]);
 registerAssertions();
 
+const {
+  CIVIC_SIP_LOGIN,
+  LOGIN_SUCCESS,
+  LOG_OUT,
+  CIVIC_SIP_SUCCESS,
+  CIVIC_SIP_CANCELLED,
+  CIVIC_SIP_ADD_EVENT_LISTENERS,
+  LOGIN_KEEP_ALIVE,
+} = loginService.actionType;
+
+function callLoginEventListenerWithSuccessEvent() {
+  // the addEventListener in civic.sip is a stub - (see init-test.js).
+  // after calling login, event listeners are added we can retrieve the event listener that was sent
+  // to this stub and call it.
+  const eventListener = civic.sip.prototype.addEventListener.withArgs('auth-code-received').getCall(0).args[1];
+  const successEvent = { response: 'some token' };
+  eventListener(successEvent);
+  return successEvent;
+}
+
+function resetSipEventListeners() {
+  civic.sip.prototype.addEventListener.resetHistory();
+}
+
 describe('Login Service actions', () => {
+  beforeEach(resetSipEventListeners);
+  beforeEach(() => {
+    loginService.keepAliveIntervalID = undefined;
+  });
+
   it('should dispatch login action', (done) => {
     expect(loginService.login()).to.dispatch.actions([{ type: CIVIC_SIP_ADD_EVENT_LISTENERS }], done);
   });
@@ -47,6 +73,67 @@ describe('Login Service actions', () => {
 
   it('should support a keepAlive function', () => {
     expect(() => loginService.keepAlive()).to.not.throw();
+  });
+
+  it('should dispatch a civic sip success', () => {
+    const stubDispatch = sinon.stub();
+
+    // login registers an event callback triggered when civic sends a successful login response
+    loginService.login()(stubDispatch);
+
+    // artificially call the login success event callback
+    const successEvent = callLoginEventListenerWithSuccessEvent();
+
+    // verify the action was dispatched by the event callback
+    expect(stubDispatch.withArgs({ type: CIVIC_SIP_SUCCESS, authToken: successEvent.response }).calledOnce).to.be.true;
+  });
+
+  it('should start a keepAlive process if an interval is set', () => {
+    // configure civic-login-redux to keepalive every second
+    config.keepAliveInterval = 1000;
+
+    const stubDispatch = sinon.stub();
+
+    // login registers an event callback triggered when civic sends a successful login response
+    loginService.login()(stubDispatch);
+
+    // verify there is not yet a keepalive process
+    expect(loginService.keepAliveIntervalID).to.be.undefined;
+
+    // artificially call the login success event callback, that starts a keepalive process
+    callLoginEventListenerWithSuccessEvent();
+
+    // stop the regular keep alive process that has just been created, from being triggered
+    clearInterval(loginService.keepAliveIntervalID);
+
+    // verify a keepalive process was created
+    expect(loginService.keepAliveIntervalID).not.to.be.undefined;
+  });
+
+  it('should start dispatching keepAlive events if an interval is set', (done) => {
+    // configure civic-login-redux to keepalive every millisecond
+    config.keepAliveInterval = 1;
+
+    const stubDispatch = sinon.stub();
+
+    // login registers an event callback triggered when civic sends a successful login response
+    loginService.login()(stubDispatch);
+
+    // verify there is not yet a keepalive process
+    expect(loginService.keepAliveIntervalID).to.be.undefined;
+
+    // artificially call the login success event callback, that starts a keepalive process
+    callLoginEventListenerWithSuccessEvent();
+
+    // do the rest of this test after waiting 5 milliseconds
+    setTimeout(() => {
+      // stop the regular keep alive process that has just been created, from being triggered
+      clearInterval(loginService.keepAliveIntervalID);
+
+      // verify at least one keepalive event was sent
+      expect(stubDispatch.withArgs({ type: LOGIN_KEEP_ALIVE }).called).to.be.true;
+      done();
+    }, 5);
   });
 });
 

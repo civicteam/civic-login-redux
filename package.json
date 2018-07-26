@@ -4,7 +4,7 @@
   "description": "Integration of Civic Login to react front-end",
   "main": "index.js",
   "scripts": {
-    "transpile": "babel src/login.js --out-file public/login.js",
+    "build": "babel src/login.js --out-file public/login.js",
     "test": "cross-env nyc --reporter=none mocha -r ./test/init-test",
     "coverage": "cross-env FORCE_COLOR=1 nyc report && nyc check-coverage",
     "lint": "eslint --max-warnings=0 .",
@@ -41,10 +41,10 @@
     "sinon": "^4.5.0"
   },
   "nyc": {
-    "lines": 75,
-    "statements": 75,
-    "functions": 60,
-    "branches": 75,
+    "lines": 95,
+    "statements": 90,
+    "functions": 80,
+    "branches": 80,
     "exclude": [
       "test/*"
     ]

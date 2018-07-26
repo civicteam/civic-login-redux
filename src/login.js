@@ -14,6 +14,17 @@ class LoginService {
     const CIVIC_SIP_SUCCESS = 'civic-login/CIVIC_SIP_SUCCESS';
     const CIVIC_SIP_ERROR = 'civic-login/CIVIC_SIP_ERROR';
 
+    this.actionType = {
+      CIVIC_SIP_LOGIN,
+      LOGIN_SUCCESS,
+      LOGIN_KEEP_ALIVE,
+      LOG_OUT,
+      CIVIC_SIP_CANCELLED,
+      CIVIC_SIP_ADD_EVENT_LISTENERS,
+      CIVIC_SIP_SUCCESS,
+      CIVIC_SIP_ERROR,
+    };
+
     // Initial Login State
     const INITIAL_STATE = {
       session: {},
@@ -82,24 +93,27 @@ class LoginService {
       });
     };
 
-    this.apiProcessLogin = function apiProcessLogin() {
-    };
+    this.apiProcessLogin = function apiProcessLogin() {};
 
-    this.keepAlive = function keepAlive() {
-    };
+    this.keepAlive = function keepAlive() {};
 
     const civicSipSuccess = dispatch => (authToken) => {
+      const dispatchIfExists = action => action && dispatch(action);
+
       dispatch({
         type: CIVIC_SIP_SUCCESS,
         authToken,
       });
-      dispatch(this.apiProcessLogin(authToken));
+      dispatchIfExists(this.apiProcessLogin(authToken));
 
       clearInterval(this.keepAliveIntervalID);
-      this.keepAliveIntervalID = setInterval(() => {
-        dispatch({ type: LOGIN_KEEP_ALIVE });
-        dispatch(this.keepAlive());
-      }, this.config.keepAliveInterval);
+
+      if (this.config.keepAliveInterval) {
+        this.keepAliveIntervalID = setInterval(() => {
+          dispatch({ type: LOGIN_KEEP_ALIVE });
+          dispatchIfExists(this.keepAlive());
+        }, this.config.keepAliveInterval);
+      }
     };
 
     const civicSipError = dispatch => error => dispatch({
