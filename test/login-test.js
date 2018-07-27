@@ -71,6 +71,7 @@ describe('Configuring the Login Service', () => {
   });
 });
 
+const loginService = new LoginService(config);
 const {
   CIVIC_SIP_LOGIN,
   LOGIN_SUCCESS,
@@ -96,10 +97,14 @@ function resetSipEventListeners() {
 }
 
 describe('The Login Service', () => {
-  const loginService = new LoginService(config);
   registerInitialStoreState({ login: loginService.reducer });
   registerMiddlewares([thunk]);
   registerAssertions();
+
+  beforeEach(resetSipEventListeners);
+  beforeEach(() => {
+    loginService.keepAliveIntervalID = undefined;
+  });
 
   it('should dispatch login action', (done) => {
     expect(loginService.login()).to.dispatch.actions([{ type: CIVIC_SIP_ADD_EVENT_LISTENERS }], done);

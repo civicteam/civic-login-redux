@@ -101,10 +101,6 @@ class LoginService {
       });
     };
 
-    this.apiProcessLogin = function apiProcessLogin() {};
-
-    this.keepAlive = function keepAlive() {};
-
     const civicSipSuccess = dispatch => (authToken) => {
       const dispatchIfExists = action => action && dispatch(action);
 
