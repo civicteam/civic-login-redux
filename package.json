@@ -44,7 +44,7 @@
     "lines": 95,
     "statements": 90,
     "functions": 80,
-    "branches": 80,
+    "branches": 85,
     "exclude": [
       "test/*"
     ]

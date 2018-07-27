@@ -75,8 +75,8 @@ const config = {
     // civicSip parameters
     appId: '...',
   },
-  apiProcessLogin
-  keepAlive
+  apiProcessLogin,
+  keepAlive,
   keepAliveInterval: 60000 // optional
 };
 const loginService = new LoginService(config);
