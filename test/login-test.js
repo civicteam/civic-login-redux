@@ -1,5 +1,6 @@
-/* global civic */
 /* eslint no-unused-expressions:  */
+/* global civic */
+
 const LoginService = require('../src/login');
 const { expect } = require('chai');
 const thunk = require('redux-thunk').default;
@@ -16,11 +17,61 @@ const config = {
   },
   keepAliveInterval: null,
 };
-const loginService = new LoginService(config);
-registerInitialStoreState({ login: loginService.reducer });
-registerMiddlewares([thunk]);
-registerAssertions();
 
+describe('The Login Service class', () => {
+  it('should expose the scopeRequests from civicSip', () => {
+    // eslint-disable-next-line new-cap
+    expect(LoginService.scopeRequests).to.equal((new civic.sip()).ScopeRequests);
+  });
+});
+
+describe('Configuring the Login Service', () => {
+  it('should pass the apiProcessLogin function from the configuration', () => {
+    const apiProcessLogin = () => {};
+
+    const configPlusApiProcessLogin = {
+      ...config,
+      apiProcessLogin,
+    };
+
+    const loginService = new LoginService(configPlusApiProcessLogin);
+
+    expect(loginService.apiProcessLogin).to.equal(apiProcessLogin);
+  });
+
+  it('should pass the keepAlive function from the configuration', () => {
+    const keepAlive = () => {};
+
+    const configPlusKeepAlive = {
+      ...config,
+      keepAlive,
+    };
+
+    const loginService = new LoginService(configPlusKeepAlive);
+
+    expect(loginService.keepAlive).to.equal(keepAlive);
+  });
+
+  it('should allow you to configure the scope request type', () => {
+    const proofOfAge = 'proofOfAge';
+    // eslint-disable-next-line new-cap
+    const signupSpy = (new civic.sip()).signup;
+    const dummyDispatch = () => {};
+
+    const configPlusScopeRequest = {
+      ...config,
+      scopeRequest: proofOfAge,
+    };
+
+    const loginService = new LoginService(configPlusScopeRequest);
+
+    loginService.login()(dummyDispatch);
+
+    expect(signupSpy.calledWith({ scopeRequest: proofOfAge })).to.equal(true);
+  });
+});
+
+const loginService = new LoginService(config);
 const {
   CIVIC_SIP_LOGIN,
   LOGIN_SUCCESS,
@@ -45,7 +96,11 @@ function resetSipEventListeners() {
   civic.sip.prototype.addEventListener.resetHistory();
 }
 
-describe('Login Service actions', () => {
+describe('The Login Service', () => {
+  registerInitialStoreState({ login: loginService.reducer });
+  registerMiddlewares([thunk]);
+  registerAssertions();
+
   beforeEach(resetSipEventListeners);
   beforeEach(() => {
     loginService.keepAliveIntervalID = undefined;
@@ -137,9 +192,9 @@ describe('Login Service actions', () => {
   });
 });
 
-const { reducer } = loginService;
-
 describe('Login Service Reducer', () => {
+  const { reducer } = new LoginService(config);
+
   const initialState = {
     session: {},
   };

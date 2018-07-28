@@ -15,6 +15,8 @@ const config = {
     // civicSip parameters
     appId: '...',
   },
+  apiProcessLogin: // function called when Civic login is complete (see below)
+  keepAlive: // optional function used to refresh a session token (see below)
   keepAliveInterval: 60000 // optional
 };
 const loginService = new LoginService(config);
@@ -46,17 +48,14 @@ loginService.reducer
 
 ```javascript
 import { combineReducers } from 'redux';
-
-combineReducers({
-  loginService : loginService.reducer,
-});
+const LoginService = require('civic-login-redux');
 
 /**
  * Methods implemented in the main application
  */
 
 // Example function that calls a back-end service which handles the auth token and generates a session token
-loginService.apiProcessLogin = function(authToken) {
+const apiProcessLogin = function(authToken) {
   return dispatch => fetch('LOGIN_URL', {headers, method: 'POST', body: JSON.stringify({authToken})})
     .then(response => response.json())
     .then(({sessionToken}) => dispatch(loginService.apiLoginSuccess(sessionToken)));
@@ -64,11 +63,43 @@ loginService.apiProcessLogin = function(authToken) {
 
 // Optional function to handle keep-alive sessions
 // This will run on every `keepAliveInterval` milliseconds after the login is successful
-// If the `keepAliveInterval` parameter is omitted from the `LoginService` config, this function will not be called 
-loginService.keepAlive = function() {
+// If the `keepAliveInterval` parameter is omitted from the `LoginService` config, this function will not be called
+const keepAlive = function() {
   return dispatch => fetch('KEEP_ALIVE_URL', {headers})
     .then(response => response.json())
     .then(({sessionToken}) => dispatch(loginService.apiLoginSuccess(sessionToken)));
 }
+
+const config = {
+  civicSip: {
+    // civicSip parameters
+    appId: '...',
+  },
+  apiProcessLogin,
+  keepAlive,
+  keepAliveInterval: 60000 // optional
+};
+const loginService = new LoginService(config);
+
+combineReducers({
+  loginService : loginService.reducer,
+});
 ```
 
+## KYC Customers
+
+For Civic customers that are enabled for KYC, you have more options on the types of information you can request from your users.
+The default is CivicBasic (available to everyone). To configure this, set the scopeRequest property on the config object.
+
+e.g. for proof of age:
+
+```
+const config = {
+  civicSip: {
+    appId: '...',
+    scopeRequest: LoginService.scopeRequests.PROOF_OF_AGE
+  }
+};
+```
+
+The choice of available scope requests is available at https://github.com/civicteam/civic-sip-js/blob/master/lib/scopeRequests.js
