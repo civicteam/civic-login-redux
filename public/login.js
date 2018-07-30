@@ -4,6 +4,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/* global civic */
+
 var LoginService =
 // Library Constructor initialized with civicSip configuration options
 function LoginService(config) {
@@ -12,7 +14,13 @@ function LoginService(config) {
   _classCallCheck(this, LoginService);
 
   this.config = config;
-  var civicSip = new civic.sip(this.config.civicSip); // eslint-disable-line no-undef, new-cap
+  var civicSip = new civic.sip(config.civicSip); // eslint-disable-line new-cap
+  var scopeRequest = config.scopeRequest || civicSip.ScopeRequests.BASIC_SIGNUP;
+
+  var unimplementedFunctionPlaceholder = function unimplementedFunctionPlaceholder() {};
+
+  this.apiProcessLogin = config.apiProcessLogin || unimplementedFunctionPlaceholder;
+  this.keepAlive = config.keepAlive || unimplementedFunctionPlaceholder;
 
   // Actions
   var CIVIC_SIP_LOGIN = 'civic-login/CIVIC_SIP_LOGIN';
@@ -88,7 +96,7 @@ function LoginService(config) {
 
   // CivicSip Login Function
   var civicSipLogin = function civicSipLogin() {
-    return Promise.resolve(civicSip.signup({ scopeRequest: civicSip.ScopeRequests.BASIC_SIGNUP }));
+    return Promise.resolve(civicSip.signup({ scopeRequest: scopeRequest }));
   };
 
   // Action Creators
@@ -110,10 +118,6 @@ function LoginService(config) {
       });
     };
   };
-
-  this.apiProcessLogin = function apiProcessLogin() {};
-
-  this.keepAlive = function keepAlive() {};
 
   var civicSipSuccess = function civicSipSuccess(dispatch) {
     return function (authToken) {
@@ -170,5 +174,12 @@ function LoginService(config) {
     };
   };
 };
+
+// mirror the scopeRequests map from civicSip so that
+// clients can choose the type of scope request they wish to use
+// eslint-disable-next-line new-cap
+
+
+LoginService.scopeRequests = new civic.sip().ScopeRequests;
 
 module.exports = LoginService;
