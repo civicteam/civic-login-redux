@@ -6,6 +6,8 @@ A simple Redux Library that enables integration of Civic Login into a react fron
 
 Run `npm install civic-login-redux --save`
 
+Note: civic-login-redux includes the [redux-thunk](https://www.npmjs.com/package/redux-thunk) middleware.
+
 ## Usage
 
 ```javascript
@@ -17,9 +19,10 @@ const config = {
   },
   apiProcessLogin: // function called when Civic login is complete (see below)
   keepAlive: // optional function used to refresh a session token (see below)
-  keepAliveInterval: 60000 // optional
+  keepAliveInterval: 60000 // optional token refresh time in ms
 };
 const loginService = new LoginService(config);
+const loginReducer = loginService.reducer;  // include this in your redux root reducer
 ```
 
 See [Civic Docs](https://docs.civic.com/#GettingStarted) for details on setting `civicSip` options.
@@ -47,8 +50,9 @@ loginService.reducer
 ## Sample code
 
 ```javascript
-import { combineReducers } from 'redux';
-const LoginService = require('civic-login-redux');
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import thunk from 'redux-thunk';
+import LoginService from 'civic-login-redux';
 
 /**
  * Methods implemented in the main application
@@ -81,9 +85,16 @@ const config = {
 };
 const loginService = new LoginService(config);
 
-combineReducers({
-  loginService : loginService.reducer,
+const rootReducer = combineReducers({
+  login: loginService.reducer,
+  // your app's other reducers
 });
+
+const store = createStore(
+  rootReducer,
+  {},
+  applyMiddleware(thunk)
+);
 ```
 
 ## KYC Customers
