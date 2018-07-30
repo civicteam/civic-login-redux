@@ -177,9 +177,12 @@ function LoginService(config) {
 
 // mirror the scopeRequests map from civicSip so that
 // clients can choose the type of scope request they wish to use
+// Note - civic-sip requires an appId, so add a dummy value here
 // eslint-disable-next-line new-cap
 
 
-LoginService.scopeRequests = new civic.sip().ScopeRequests;
+LoginService.scopeRequests = new civic.sip({
+  appId: 'dummy'
+}).ScopeRequests;
 
 module.exports = LoginService;
