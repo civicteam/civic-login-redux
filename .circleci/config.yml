@@ -9,7 +9,7 @@ workflows:
 jobs:
   build:
     docker:
-      - image: circleci/node:8.9
+      - image: circleci/node:8.15
 
     working_directory: ~/repo
 
@@ -21,14 +21,13 @@ jobs:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
 
-      - run:
-          command: |
-            npm install
+      - run: npm ci
+      - run: npm run audit-ci
 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
 
-      - run: npm run ci
+      - run: npm run check
 
