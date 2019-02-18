@@ -11,5 +11,7 @@ Whenever you whitelist a specific advisory it is required to refer it here and j
 
 | #    | Level | Module | Title | Explanation |
 |------|-------|---------|------|-------------|
-|  |  |  |  |  |
+| 577 | Low | lodash | Prototype Pollution| required by babel-preset-env  |
+| 782 | Moderate | lodash | Prototype Pollution | required by babel-preset-env - appears to be a duplicate of 577 |
+| 786 | Low | braces | "Regular Expression Denial of Service | dependency of babel-cli (latest version) |
 
