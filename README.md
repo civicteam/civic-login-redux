@@ -2,7 +2,7 @@
 
 A simple Redux Library that enables integration of Civic Login into a react front-end.
 
-#### Not using AWS Lambda? You're probably looking for [Civic SIP API](https://www.npmjs.com/package/civic-sip-api).
+#### Not using Redux? You're probably looking for [Civic SIP API](https://www.npmjs.com/package/civic-sip-api).
 
 ## Installation
 
